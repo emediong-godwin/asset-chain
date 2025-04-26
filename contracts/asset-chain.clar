@@ -83,3 +83,51 @@
         expiry: uint 
     }
 )
+
+;; Governance proposal tracking
+(define-map proposals
+    { proposal-id: uint }
+    {
+        title: (string-ascii 256),
+        asset-id: uint,
+        start-height: uint,
+        end-height: uint,
+        executed: bool,
+        votes-for: uint,
+        votes-against: uint,
+        minimum-votes: uint
+    }
+)
+
+;; Vote records
+(define-map votes
+    { proposal-id: uint, voter: principal }
+    { vote-amount: uint }
+)
+
+;; Dividend distribution tracking
+(define-map dividend-claims
+    { asset-id: uint, claimer: principal }
+    { last-claimed-amount: uint }
+)
+
+;; Price oracle integration
+(define-map price-feeds
+    { asset-id: uint }
+    {
+        price: uint,
+        decimals: uint,
+        last-updated: uint,
+        oracle: principal
+    }
+)
+
+;; Validation Functions
+
+;; Validate that an asset value is within acceptable limits
+(define-private (validate-asset-value (value uint))
+    (and 
+        (>= value MIN-ASSET-VALUE)
+        (<= value MAX-ASSET-VALUE)
+    )
+)
