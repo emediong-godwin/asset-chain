@@ -52,6 +52,10 @@
 ;; Tokenization settings
 (define-constant tokens-per-asset u100000) ;; SFTs per asset - defines the total supply for each tokenized asset
 
+;; Add data variables to store the current asset and proposal counters
+(define-data-var last-asset-id uint u0)
+(define-data-var last-proposal-id uint u0)
+
 ;; Data Maps
 
 ;; Core asset information
@@ -182,6 +186,7 @@
 
         (let 
             ((asset-id (get-next-asset-id)))
+            ;; Set the new assets data
             (map-set assets
                 { asset-id: asset-id }
                 {
@@ -194,10 +199,13 @@
                     total-dividends: u0
                 }
             )
+            ;; Set initial token balance for the asset owner
             (map-set token-balances
                 { owner: contract-owner, asset-id: asset-id }
                 { balance: tokens-per-asset }
             )
+            ;; Increment the last-asset-id variable
+            (var-set last-asset-id asset-id)
             (ok asset-id)
         )
     )
@@ -235,7 +243,8 @@
 
         (let
             ((proposal-id (get-next-proposal-id)))
-            (ok (map-set proposals
+            ;; Set the new proposal data
+            (map-set proposals
                 { proposal-id: proposal-id }
                 {
                     title: title,
@@ -247,7 +256,10 @@
                     votes-against: u0,
                     minimum-votes: minimum-votes
                 }
-            ))
+            )
+            ;; Increment the last-proposal-id variable
+            (var-set last-proposal-id proposal-id)
+            (ok proposal-id)
         )
     )
 )
@@ -351,12 +363,12 @@
     )
 )
 
-;; Get the last registered asset ID (to be implemented)
+;; Implement the get-last-asset-id function to return the current counter
 (define-private (get-last-asset-id)
-    none
+    (some (var-get last-asset-id))
 )
 
-;; Get the last created proposal ID (to be implemented)
+;; Implement the get-last-proposal-id function to return the current counter
 (define-private (get-last-proposal-id)
-    none
+    (some (var-get last-proposal-id))
 )
