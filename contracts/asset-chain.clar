@@ -131,3 +131,40 @@
         (<= value MAX-ASSET-VALUE)
     )
 )
+
+;; Validate that a proposal duration is within acceptable limits
+(define-private (validate-duration (duration uint))
+    (and 
+        (>= duration MIN-DURATION)
+        (<= duration MAX-DURATION)
+    )
+)
+
+;; Validate that a KYC level is within acceptable limits
+(define-private (validate-kyc-level (level uint))
+    (<= level MAX-KYC-LEVEL)
+)
+
+;; Validate that an expiry is within acceptable limits
+(define-private (validate-expiry (expiry uint))
+    (and 
+        (> expiry stacks-block-height)
+        (<= (- expiry stacks-block-height) MAX-EXPIRY)
+    )
+)
+
+;; Validate that a vote count threshold is reasonable
+(define-private (validate-minimum-votes (vote-count uint))
+    (and 
+        (> vote-count u0)
+        (<= vote-count tokens-per-asset)
+    )
+)
+
+;; Validate that a metadata URI is properly formed
+(define-private (validate-metadata-uri (uri (string-ascii 256)))
+    (and 
+        (> (len uri) u0)
+        (<= (len uri) u256)
+    )
+)
