@@ -40,3 +40,46 @@
 (define-constant err-invalid-votes (err u115))
 (define-constant err-invalid-address (err u116))
 (define-constant err-invalid-title (err u117))
+
+;; Value limits and thresholds
+(define-constant MAX-ASSET-VALUE u1000000000000) ;; 1 trillion
+(define-constant MIN-ASSET-VALUE u1000) ;; 1 thousand
+(define-constant MAX-DURATION u144) ;; ~1 day in blocks
+(define-constant MIN-DURATION u12) ;; ~1 hour in blocks
+(define-constant MAX-KYC-LEVEL u5)
+(define-constant MAX-EXPIRY u52560) ;; ~1 year in blocks
+
+;; Tokenization settings
+(define-constant tokens-per-asset u100000) ;; SFTs per asset - defines the total supply for each tokenized asset
+
+;; Data Maps
+
+;; Core asset information
+(define-map assets 
+    { asset-id: uint }
+    {
+        owner: principal,
+        metadata-uri: (string-ascii 256),
+        asset-value: uint,
+        is-locked: bool,
+        creation-height: uint,
+        last-price-update: uint,
+        total-dividends: uint
+    }
+)
+
+;; Token ownership records
+(define-map token-balances
+    { owner: principal, asset-id: uint }
+    { balance: uint }
+)
+
+;; KYC status tracking
+(define-map kyc-status
+    { address: principal }
+    { 
+        is-approved: bool,
+        level: uint,
+        expiry: uint 
+    }
+)
